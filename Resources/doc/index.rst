@@ -75,6 +75,32 @@ If you want to modify some variables for the compiled stylesheets you have the o
 You must use the variable keys from the `variables.less<https://github.com/twitter/bootstrap/blob/master/less/variables.less>`_ .
 The compiler script will replace the old value by the new one.
 
+Insert Assets
+~~~~~~~~~~~~~
+
+After compiling you can use the files as assets in your layout.
+
+
+.. code-block :: twig
+
+    #layout.html.twig
+    <html>
+        <head>
+            <!-- Stylesheets -->
+            <link href="{{ asset('bundles/phpugltwitterbootstrap/css/bootstrap.css') }}" rel="stylesheet">
+
+        </head>
+        <body>
+            <!-- your content -->
+
+            <!-- Stylesheets -->
+            {% javascripts
+                  '@PhpuglTwitterBootstrapBundle/Resources/public/js/bootstrap.js'
+            %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        </body>
+    </html>
 
 Override form fields template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
