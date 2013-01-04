@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Configurable Twitter Bootstrap bundle for symfony2",
     "keywords": ["bootstrap", "css", "js"],
-    "homepage": "https://github.com/phpugl/TwitterBootstrapBundle",
+    "homepage": "https://github.com/phpugl/PhpuglTwitterBootstrapBundle",
     "license": "MIT",
     "authors": [
         {
