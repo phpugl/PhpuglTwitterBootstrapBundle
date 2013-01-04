@@ -1,0 +1,32 @@
+parameters:
+    phpugl_twitter_bootstrap.less:
+            out: "bootstrap.css"
+            files:
+                - "bootstrap.less"
+                - "responsive.less"
+    phpugl_twitter_bootstrap.images:
+            files:
+                - "glyphicons-halflings.png"
+                - "glyphicons-halflings-white.png"
+    phpugl_twitter_bootstrap.javascript:
+            out: "bootstrap.js"
+            files:
+                - "bootstrap-transition.js"
+                - "bootstrap-alert.js"
+                - "bootstrap-modal.js"
+                - "bootstrap-dropdown.js"
+                - "bootstrap-scrollspy.js"
+                - "bootstrap-tab.js"
+                - "bootstrap-tooltip.js"
+                - "bootstrap-popover.js"
+                - "bootstrap-button.js"
+                - "bootstrap-collapse.js"
+                - "bootstrap-carousel.js"
+                - "bootstrap-typeahead.js"
+                - "bootstrap-affix.js"
+
+
+services:
+#    phpugl_twitter_bootstrap.example:
+#        class: %phpugl_twitter_bootstrap.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
