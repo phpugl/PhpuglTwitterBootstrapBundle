@@ -4,8 +4,8 @@ PhpuglTwitterBootstrapBundle
 Introduction
 ------------
 
-PhpuglTwitterBootstrapBundle is a configurable twitter bootstrap bundle. It compiles with the help of *leafo/lessphp*
-the twitter bootstrap less file to stylesheet. The different to other bundles it is simple to use and it allows to
+PhpuglTwitterBootstrapBundle is a configurable Twitter bootstrap bundle. It compiles with the help of *leafo/lessphp*
+the Twitter bootstrap less file to stylesheet. The difference to other bundles is, that it is simple to use and it allows to
 modify the *variables.less* via config.yml.
 
 Installation
@@ -72,7 +72,7 @@ If you want to modify some variables for the compiled stylesheets you have the o
                 gridColumns:    10
                 ...
 
-You must use the variable keys from the `variables.less<https://github.com/twitter/bootstrap/blob/master/less/variables.less>`_ .
+You must use the variable keys from the [`variables.less`](https://github.com/twitter/bootstrap/blob/master/less/variables.less) .
 The compiler script will replace the old value by the new one.
 
 Insert Assets
