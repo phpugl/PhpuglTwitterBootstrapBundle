@@ -25,6 +25,10 @@ class PhpuglTwitterBootstrapExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        if (isset($config['config'])) {
+            $container->setParameter('phpugl_twitter_bootstrap.config', $config['config']);
+        }
+
         if (isset($config['less'])) {
             $container->setParameter('phpugl_twitter_bootstrap.less', $config['less']);
         }

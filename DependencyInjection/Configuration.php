@@ -22,11 +22,28 @@ class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root('phpugl_twitter_bootstrap');
 
+        $this->addConfigSection($rootNode);
         $this->addLessSection($rootNode);
         $this->addImagesSection($rootNode);
         $this->addJavascriptSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addConfigSection(ArrayNodeDefinition $builder)
+    {
+        $builder
+            ->children()
+                ->arrayNode('config')
+                    ->children()
+                        ->scalarNode('twitter_path')
+                            ->info('path to vendor twitter bootrap')
+                            ->defaultValue('%kernel.root_dir%/../vendor/twitter/bootstrap/twitter/bootstrap')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     private function addLessSection(ArrayNodeDefinition $builder)
