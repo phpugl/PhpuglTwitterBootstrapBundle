@@ -46,7 +46,6 @@ or add the package to your ``composer.json`` file directly.
 
     composer -v install
 
-
 Usage
 -----
 
@@ -74,6 +73,25 @@ If you want to modify some variables for the compiled stylesheets you have the o
 
 You must use the variable keys from the [`variables.less`](https://github.com/twitter/bootstrap/blob/master/less/variables.less) .
 The compiler script will replace the old value by the new one.
+
+Add other resources to compiling process (since v0.2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The configuration for this bundle allows to add other resources. Maybe you want to compile some tweaks or add a
+theme to the bootstrap.
+
+.. code-block :: yaml
+
+    # config.yml
+    phpugl_twitter_bootstrap:
+        less:
+            files:
+                - "@YourBundle/Resources/less/yourfile.less"
+                - "bootstrap.less"
+                - "responsive.less"
+                - "@YourBundle/Resources/less/another.less"
+
+The order of files is important and will be respected.
 
 Insert Assets
 ~~~~~~~~~~~~~
@@ -120,7 +138,9 @@ Default configuration
 
 .. code-block :: javascript
 
-    twitter_bootstrap:
+    phpugl_twitter_bootstrap:
+        config:
+            twitter_path: "%kernel.root_dir%/../vendor/twitter/bootstrap/twitter/bootstrap"
         less:
             out: "bootstrap.css"
             files:

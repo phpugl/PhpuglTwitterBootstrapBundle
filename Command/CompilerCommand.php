@@ -11,9 +11,10 @@ use lessc;
 
 class CompilerCommand extends ContainerAwareCommand
 {
+    protected $kernel;
     protected $path_root;
-    protected $path_twitter;
     protected $path_resources;
+    protected $path_twitter;
     protected $config = array();
 
     public function __construct($name = null)
@@ -32,10 +33,16 @@ class CompilerCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->kernel = $this->getContainer()->get('kernel');
         $this->path_root = $this->getContainer()->get('kernel')->getRootDir();
-        $this->path_twitter = $this->path_root . '/../vendor/twitter/bootstrap/twitter/bootstrap';
 
         // read config
+        $this->config['config'] = $this->getContainer()->getParameter('phpugl_twitter_bootstrap.config');
+
+        if (isset($this->config['config']['twitter_path'])) {
+            $this->path_twitter = $this->config['config']['twitter_path'];
+        }
+
         $this->config['less'] = $this->getContainer()->getParameter('phpugl_twitter_bootstrap.less');
         $this->config['images'] = $this->getContainer()->getParameter('phpugl_twitter_bootstrap.images');
         $this->config['javascript'] = $this->getContainer()->getParameter('phpugl_twitter_bootstrap.javascript');
@@ -55,19 +62,18 @@ class CompilerCommand extends ContainerAwareCommand
 
     protected function generateCss(OutputInterface $output)
     {
+        $src_dir = $this->path_twitter . '/less';
         $less_dir = $this->createDirectory($this->path_resources . '/less');
         $out_dir = $this->createDirectory($this->path_resources . '/public/css');
 
         $less = new lessc;
-        $less->setImportDir(array($less_dir, $this->path_twitter  . '/less'));
-
-        $output->writeln('<comment>Writing bootstrap.css from bootstrap.less</comment>');
+        $less->setImportDir(array($less_dir, $src_dir));
 
         // read variable config and generate new variable less
         if (isset($this->config['less']['variables'])) {
             $variables_config = $this->config['less']['variables'];
             if (!empty($variables_config)) {
-                $variables_file = file_get_contents($this->path_twitter . '/less/variables.less');
+                $variables_file = file_get_contents($src_dir . DIRECTORY_SEPARATOR . 'variables.less');
                 foreach ($variables_config as $key => $value) {
                     $variables_file = preg_replace('/@' . $key . ':.*;/', '@' . $key . ': ' . $value . ';', $variables_file);
                 }
@@ -76,18 +82,27 @@ class CompilerCommand extends ContainerAwareCommand
         }
 
         // merge less files from config
-        $content = "";
-        $less_files = $this->config['less']['files'];
-        foreach ($less_files as $file) {
-            $content .= file_get_contents($this->path_twitter . '/less/' . $file);
+        $content = '';
+        foreach ($this->config['less']['files'] as $file) {
+            try {
+                $path = $this->kernel->locateResource($file);
+            } catch (\InvalidArgumentException $ex) {
+                $path = $src_dir . DIRECTORY_SEPARATOR . $file;
+            }
+
+            if (file_exists($path)) {
+                $output->writeln('<comment>Add ' . $file . ' to compiling source</comment>');
+                $content .= file_get_contents($path);
+            }
         }
 
         // compile less
         if (!empty($content)) {
             $compiled = $less->compile($content);
+
             if (!empty($compiled)) {
                 file_put_contents($out_dir . DIRECTORY_SEPARATOR . $this->config['less']['out'], $compiled);
-                $output->writeln('<info>Success, bootstrap.css has been written in @PhpuglTwitterBootstrapBundle/css/' . $this->config['less']['out'] .  '</info>');
+                $output->writeln('<info>Compiling successful, output has been written in @PhpuglTwitterBootstrapBundle/css/' . $this->config['less']['out'] .  '</info>');
             } else {
                 throw new \Exception("The compiled output is empty.");
             }
@@ -100,24 +115,27 @@ class CompilerCommand extends ContainerAwareCommand
 
     protected function generateJavascript(OutputInterface $output)
     {
-        $in_dir = $this->path_twitter . '/js';
+        $src_dir = $this->path_twitter . '/js';
         $out_dir = $this->createDirectory($this->path_resources . '/public/js');
 
-        $javascript_files = $this->config['javascript']['files'];
-
         $content = '';
-        foreach ($javascript_files as $file) {
-            $path = realpath($in_dir . DIRECTORY_SEPARATOR . $file);
+        foreach ($this->config['javascript']['files'] as $file) {
+            try {
+                $path = $this->kernel->locateResource($file);
+            } catch (\InvalidArgumentException $ex) {
+                $path = realpath($src_dir . DIRECTORY_SEPARATOR . $file);
+            }
+
             if (file_exists($path)) {
-                $content .= file_get_contents(realpath($in_dir . DIRECTORY_SEPARATOR . $file));
-                $output->writeln('<info>Add ' . $file . ' to ' . $this->config['javascript']['out'] . '</info>');
+                $content .= file_get_contents($path);
+                $output->writeln('<comment>Add ' . $file . ' to ' . $this->config['javascript']['out'] . '</comment>');
             } else {
                 $output->writeln('<error>File ' . $file . ' not found in ' . $path . '</error>');
             }
         }
 
         if (false !== file_put_contents($out_dir . DIRECTORY_SEPARATOR .$this->config['javascript']['out'], $content)) {;
-            $output->writeln('<info>Success, bootstrap.css has been written in @PhpuglTwitterBootstrapBundle/js/' . $this->config['javascript']['out'] .  '</info>');
+            $output->writeln('<info>Merging successful, output has been written in @PhpuglTwitterBootstrapBundle/js/' . $this->config['javascript']['out'] .  '</info>');
         }
 
         return true;
@@ -125,13 +143,16 @@ class CompilerCommand extends ContainerAwareCommand
 
     protected function copyImages(OutputInterface $output)
     {
-        $image_dir = $this->path_twitter . '/img';
+        $src_dir = $this->path_twitter . '/img';
         $out_dir =  $this->createDirectory($this->path_resources . '/public/img');
 
-        $image_files = $this->config['images']['files'];
+        foreach ($this->config['images']['files'] as $file) {
+            try {
+                $path = $this->kernel->locateResource($file);
+            } catch (\InvalidArgumentException $ex) {
+                $path = realpath($src_dir . DIRECTORY_SEPARATOR . $file);
+            }
 
-        foreach ($image_files as $file) {
-            $path = realpath($image_dir . DIRECTORY_SEPARATOR . $file);
             if (file_exists($path)) {
                 if (copy($path, $out_dir . DIRECTORY_SEPARATOR . $file) === true) {
                     $output->writeln('<info>Copy ' . $file . ' to ' . $out_dir . '</info>');
