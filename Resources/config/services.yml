@@ -1,6 +1,6 @@
 parameters:
     phpugl_twitter_bootstrap.config:
-        twitter_path: "%kernel.root_dir%/../vendor/twitter/bootstrap/twitter/bootstrap"
+        twitter_path: "%kernel.root_dir%/../vendor/twitter/bootstrap"
     phpugl_twitter_bootstrap.less:
         out: "bootstrap.css"
         files:

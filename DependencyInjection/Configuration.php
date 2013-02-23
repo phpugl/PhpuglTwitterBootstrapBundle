@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('twitter_path')
                             ->info('path to vendor twitter bootrap')
-                            ->defaultValue('%kernel.root_dir%/../vendor/twitter/bootstrap/twitter/bootstrap')
+                            ->defaultValue('%kernel.root_dir%/../vendor/twitter/bootstrap')
                         ->end()
                     ->end()
                 ->end()
